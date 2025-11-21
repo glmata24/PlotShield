@@ -1,0 +1,30 @@
+{
+  "name": "plotshield",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "echo \"Use app-level dev scripts, e.g., npm run dev -w apps/api\"",
+    "build": "echo \"Use app-level build scripts, e.g., npm run build -w apps/web && npm run build -w apps/api\"",
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glmata24/PlotShield.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "bugs": {
+    "url": "https://github.com/glmata24/PlotShield/issues"
+  },
+  "homepage": "https://github.com/glmata24/PlotShield#readme"
+}

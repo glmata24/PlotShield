@@ -1,0 +1,1075 @@
+openapi: 3.0.3
+info:
+  title: Book App API
+  version: 1.0.0
+  description: |
+    REST API for the Book App. The client never connects to the database directly;
+    all access is via this API. Resources include profiles, books, follows,
+    reviews, reading history, and recommendations.
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server (replace with your real base URL)
+  - url: http://localhost:3000/v1
+    description: Local development server
+
+tags:
+  - name: Profiles
+  - name: Books
+  - name: Follows
+  - name: Reviews
+  - name: ReadingHistory
+  - name: Recommendations
+  - name: Health
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        authUserId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        profilePictureUrl:
+          type: string
+          format: uri
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - authUserId
+        - username
+    ProfileCreate:
+      type: object
+      properties:
+        authUserId:
+          type: string
+          format: uuid
+          description: ID of the auth.users row (usually from JWT).
+        username:
+          type: string
+        profilePictureUrl:
+          type: string
+          format: uri
+          nullable: true
+      required:
+        - authUserId
+        - username
+    ProfileUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        profilePictureUrl:
+          type: string
+          format: uri
+          nullable: true
+
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+          nullable: true
+        genre:
+          type: string
+          nullable: true
+        publicationYear:
+          type: integer
+          nullable: true
+        aiReviewSummary:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - bookId
+        - title
+    BookCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+          nullable: true
+        genre:
+          type: string
+          nullable: true
+        publicationYear:
+          type: integer
+          nullable: true
+        aiReviewSummary:
+          type: string
+          nullable: true
+      required:
+        - title
+    BookUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+          nullable: true
+        genre:
+          type: string
+          nullable: true
+        publicationYear:
+          type: integer
+          nullable: true
+        aiReviewSummary:
+          type: string
+          nullable: true
+
+    Follow:
+      type: object
+      properties:
+        followId:
+          type: string
+          format: uuid
+        followerId:
+          type: string
+          format: uuid
+        followeeId:
+          type: string
+          format: uuid
+        status:
+          type: boolean
+        followDate:
+          type: string
+          format: date-time
+      required:
+        - followId
+        - followerId
+        - followeeId
+    FollowCreate:
+      type: object
+      properties:
+        followerId:
+          type: string
+          format: uuid
+        followeeId:
+          type: string
+          format: uuid
+      required:
+        - followerId
+        - followeeId
+    FollowUpdate:
+      type: object
+      properties:
+        status:
+          type: boolean
+
+    Review:
+      type: object
+      properties:
+        reviewId:
+          type: string
+          format: uuid
+        body:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        worldBuilding:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        characters:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        plot:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        writingStyle:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        reviewDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - reviewId
+        - userId
+        - bookId
+    ReviewCreate:
+      type: object
+      properties:
+        body:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        worldBuilding:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        characters:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        plot:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        writingStyle:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+      required:
+        - userId
+        - bookId
+    ReviewUpdate:
+      type: object
+      properties:
+        body:
+          type: string
+          nullable: true
+        worldBuilding:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        characters:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        plot:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+        writingStyle:
+          type: integer
+          minimum: 0
+          maximum: 5
+          nullable: true
+
+    ReadingHistoryEntry:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        lastEntryDate:
+          type: string
+          format: date-time
+      required:
+        - userId
+        - bookId
+    ReadingHistoryUpsert:
+      type: object
+      properties:
+        lastEntryDate:
+          type: string
+          format: date-time
+          description: If omitted, server may default to current time.
+      additionalProperties: false
+
+    Recommendation:
+      type: object
+      properties:
+        recommendationId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+        - recommendationId
+        - userId
+        - bookId
+    RecommendationCreate:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+      required:
+        - userId
+        - bookId
+    RecommendationUpdate:
+      type: object
+      properties:
+        lastUpdated:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /profiles:
+    get:
+      tags: [Profiles]
+      summary: List profiles
+      operationId: listProfiles
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          description: Optional filter by username (exact or partial, implementation-defined).
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthorized
+    post:
+      tags: [Profiles]
+      summary: Create a new profile
+      operationId: createProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+      responses:
+        '201':
+          description: Profile created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Invalid input
+        '409':
+          description: Username or authUserId already exists
+
+  /profiles/{id}:
+    get:
+      tags: [Profiles]
+      summary: Get profile by ID
+      operationId: getProfileById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '404':
+          description: Profile not found
+    patch:
+      tags: [Profiles]
+      summary: Update a profile
+      operationId: updateProfile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '404':
+          description: Profile not found
+    delete:
+      tags: [Profiles]
+      summary: Delete a profile
+      operationId: deleteProfile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Profile deleted
+        '404':
+          description: Profile not found
+
+  /books:
+    get:
+      tags: [Books]
+      summary: List books
+      operationId: listBooks
+      parameters:
+        - in: query
+          name: author
+          schema:
+            type: string
+        - in: query
+          name: genre
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      tags: [Books]
+      summary: Create a new book
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreate'
+      responses:
+        '201':
+          description: Book created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid input
+
+  /books/{bookId}:
+    get:
+      tags: [Books]
+      summary: Get a book by ID
+      operationId: getBookById
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Book found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+    patch:
+      tags: [Books]
+      summary: Update a book
+      operationId: updateBook
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookUpdate'
+      responses:
+        '200':
+          description: Updated book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+    delete:
+      tags: [Books]
+      summary: Delete a book
+      operationId: deleteBook
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Book deleted
+        '404':
+          description: Book not found
+
+  /follows:
+    get:
+      tags: [Follows]
+      summary: List follow relationships
+      operationId: listFollows
+      parameters:
+        - in: query
+          name: followerId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: followeeId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of follow relationships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Follow'
+    post:
+      tags: [Follows]
+      summary: Create a follow relationship
+      operationId: createFollow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowCreate'
+      responses:
+        '201':
+          description: Follow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Follow'
+        '400':
+          description: Invalid input
+        '409':
+          description: Relationship already exists or follower=followee not allowed
+
+  /follows/{followId}:
+    patch:
+      tags: [Follows]
+      summary: Update follow (e.g. status)
+      operationId: updateFollow
+      parameters:
+        - in: path
+          name: followId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUpdate'
+      responses:
+        '200':
+          description: Updated follow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Follow'
+        '404':
+          description: Follow not found
+    delete:
+      tags: [Follows]
+      summary: Delete follow relationship
+      operationId: deleteFollow
+      parameters:
+        - in: path
+          name: followId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Follow deleted
+        '404':
+          description: Follow not found
+
+  /reviews:
+    get:
+      tags: [Reviews]
+      summary: List reviews
+      operationId: listReviews
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: bookId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      tags: [Reviews]
+      summary: Create a review
+      operationId: createReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          description: Invalid input
+
+  /reviews/{reviewId}:
+    get:
+      tags: [Reviews]
+      summary: Get review by ID
+      operationId: getReviewById
+      parameters:
+        - in: path
+          name: reviewId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Review found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '404':
+          description: Review not found
+    patch:
+      tags: [Reviews]
+      summary: Update review
+      operationId: updateReview
+      parameters:
+        - in: path
+          name: reviewId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewUpdate'
+      responses:
+        '200':
+          description: Updated review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '404':
+          description: Review not found
+    delete:
+      tags: [Reviews]
+      summary: Delete review
+      operationId: deleteReview
+      parameters:
+        - in: path
+          name: reviewId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Review deleted
+        '404':
+          description: Review not found
+
+  /reading-history:
+    get:
+      tags: [ReadingHistory]
+      summary: List reading history entries
+      operationId: listReadingHistory
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: bookId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of reading history entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadingHistoryEntry'
+    post:
+      tags: [ReadingHistory]
+      summary: Create or update reading history entry
+      operationId: createReadingHistory
+      description: >
+        Creates a new reading history entry. If the (userId, bookId) pair already
+        exists, the server may reject or treat this as an update, depending on implementation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadingHistoryEntry'
+      responses:
+        '201':
+          description: Reading history entry created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingHistoryEntry'
+        '200':
+          description: Reading history entry updated (upsert behavior)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingHistoryEntry'
+        '400':
+          description: Invalid input
+
+  /reading-history/{userId}/{bookId}:
+    get:
+      tags: [ReadingHistory]
+      summary: Get reading history entry
+      operationId: getReadingHistoryEntry
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Reading history entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingHistoryEntry'
+        '404':
+          description: Entry not found
+    put:
+      tags: [ReadingHistory]
+      summary: Upsert reading history entry
+      operationId: upsertReadingHistoryEntry
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadingHistoryUpsert'
+      responses:
+        '200':
+          description: Entry created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingHistoryEntry'
+    delete:
+      tags: [ReadingHistory]
+      summary: Delete reading history entry
+      operationId: deleteReadingHistoryEntry
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Entry deleted
+        '404':
+          description: Entry not found
+
+  /recommendations:
+    get:
+      tags: [Recommendations]
+      summary: List recommendations
+      operationId: listRecommendations
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recommendation'
+    post:
+      tags: [Recommendations]
+      summary: Create a recommendation
+      operationId: createRecommendation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationCreate'
+      responses:
+        '201':
+          description: Recommendation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recommendation'
+        '400':
+          description: Invalid input
+        '409':
+          description: Recommendation already exists for user+book
+
+  /recommendations/{id}:
+    get:
+      tags: [Recommendations]
+      summary: Get recommendation by ID
+      operationId: getRecommendationById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Recommendation found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recommendation'
+        '404':
+          description: Recommendation not found
+    patch:
+      tags: [Recommendations]
+      summary: Update recommendation
+      operationId: updateRecommendation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationUpdate'
+      responses:
+        '200':
+          description: Updated recommendation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recommendation'
+        '404':
+          description: Recommendation not found
+    delete:
+      tags: [Recommendations]
+      summary: Delete recommendation
+      operationId: deleteRecommendation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Recommendation deleted
+        '404':
+          description: Recommendation not found

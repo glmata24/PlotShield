@@ -1,0 +1,10 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Placeholder for React + Vite app (per PRD)",
+  "scripts": {
+    "dev": "echo \"Scaffold with Vite (React + TS) next: npm create vite@latest web -- --template react-ts\"",
+    "build": "echo \"Add build script after scaffolding Vite app\""
+  }
+}
