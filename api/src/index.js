@@ -17,8 +17,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Prevent noisy browser requests from surfacing as errors
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // API base path from OpenAPI servers: /v1
 app.use('/v1/health', healthRouter);
+app.use('/health', healthRouter);
 app.use('/v1/profiles', profilesRouter);
 app.use('/v1/books', booksRouter);
 app.use('/v1/follows', followsRouter);
@@ -29,6 +33,11 @@ app.use('/v1/recommendations', recommendationsRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`API listening on http://localhost:${PORT}`);
-});
+// Only start the HTTP server when not running inside AWS Lambda
+if (!process.env.LAMBDA_TASK_ROOT) {
+  app.listen(PORT, () => {
+    console.log(`API listening on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

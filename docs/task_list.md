@@ -149,30 +149,7 @@
     - Filters by event type and date range.
     - Clear-all and remove-item actions work.
 
-## 7) AI-Categorized Insights (Themes, Characters, Setting)
-
-- **Task:** AI insights contract and stub integration
-  - **Description:** Define contract for AI output (themes, character development, setting) and implement a stub/provider adapter.
-  - **Associated feature/user story:** AI-driven content analysis dashboard.
-  - **Acceptance criteria:**
-    - Contract documented and validated.
-    - Stub returns deterministic sample insights for demo books.
-
-- **Task:** Insights API and caching
-  - **Description:** Implement `/api/books/:id/insights` with caching to avoid repeated generation.
-  - **Associated feature/user story:** Categorized insights with filters.
-  - **Acceptance criteria:**
-    - Returns structured insights arrays with categories and confidence.
-    - Cached responses served within TTL; cache-busting supported.
-
-- **Task:** Insights dashboard UI with filters
-  - **Description:** Create a dashboard section with filters for themes, character development, and setting.
-  - **Associated feature/user story:** Analyze book content effectively.
-  - **Acceptance criteria:**
-    - Filter chips toggle categories and update results in place.
-    - Loading/empty/error states are handled.
-
-## 8) Age Group & Reading Level Tagging
+## 7) Age Group & Reading Level Tagging
 
 - **Task:** Tagging schema and source
   - **Description:** Define fields for age group (e.g., 8–12, YA, Adult) and reading complexity; decide source (manual/semi-automated).

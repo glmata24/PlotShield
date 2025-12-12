@@ -42,7 +42,7 @@ router.get('/:bookId', async (req, res, next) => {
     const { data, error } = await supabase
       .from('books')
       .select('*')
-      .eq('bookId', bookId)
+      .eq('book_id', bookId)
       .single();
     if (error) {
       if (error.code === 'PGRST116') return res.status(404).end();
@@ -63,7 +63,7 @@ router.patch('/:bookId', async (req, res, next) => {
     const { data, error } = await supabase
       .from('books')
       .update(payload)
-      .eq('bookId', bookId)
+      .eq('book_id', bookId)
       .select('*')
       .single();
     if (error) {
@@ -83,7 +83,7 @@ router.delete('/:bookId', async (req, res, next) => {
     const { error } = await supabase
       .from('books')
       .delete()
-      .eq('bookId', bookId);
+      .eq('book_id', bookId);
     if (error) throw error;
     res.status(204).end();
   } catch (err) {

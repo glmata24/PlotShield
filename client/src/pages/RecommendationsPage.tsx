@@ -14,7 +14,12 @@ function RecommendationsPage() {
   const [error, setError] = useState<string | null>(null)
 
   const apiBaseUrl = useMemo(
-    () => import.meta.env.VITE_API_BASE_URL as string | undefined,
+    () => {
+      const raw = import.meta.env.VITE_API_BASE_URL as string | undefined
+      if (!raw) return undefined
+      const trimmed = raw.replace(/\/+$/, '')
+      return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`
+    },
     [],
   )
 

@@ -34,10 +34,23 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.warn('[supabase] Missing SUPABASE_URL or API key (anon/service role) in environment.');
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: false
-  }
-});
+let supabase;
+if (SUPABASE_URL && SUPABASE_KEY) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: false
+    }
+  });
+} else {
+  // Avoid crashing the process at import time; fail only when Supabase is actually used.
+  supabase = new Proxy(
+    {},
+    {
+      get() {
+        throw new Error('Supabase is not configured (missing SUPABASE_URL and/or key).');
+      }
+    }
+  );
+}
 
 module.exports = { supabase };

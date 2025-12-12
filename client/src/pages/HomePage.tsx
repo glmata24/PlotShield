@@ -13,7 +13,6 @@ function HomePage() {
             <li><Link to="/favorites">Favorites / Bookmarks</Link></li>
             <li><Link to="/ratings">Ratings / Reactions</Link></li>
             <li><Link to="/history">Reading History</Link></li>
-            <li><Link to="/insights">AI-Categorized Insights</Link></li>
             <li><Link to="/tags">Age Group & Reading Level Tagging</Link></li>
           </ul>
         </nav>

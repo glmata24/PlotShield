@@ -20,7 +20,12 @@ function ReviewsTogglePage() {
   const [error, setError] = useState<string | null>(null)
 
   const apiBaseUrl = useMemo(
-    () => import.meta.env.VITE_API_BASE_URL as string | undefined,
+    () => {
+      const raw = import.meta.env.VITE_API_BASE_URL as string | undefined
+      if (!raw) return undefined
+      const trimmed = raw.replace(/\/+$/, '')
+      return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`
+    },
     [],
   )
 
@@ -59,10 +64,12 @@ function ReviewsTogglePage() {
         }
 
         const reviewsData = (await reviewsResponse.json()) as Review[]
-        const bookData = (await bookResponse.json()) as BookWithSummary
+        const bookData = (await bookResponse.json()) as BookWithSummary & {
+          ai_review_summary?: string | null
+        }
 
         setReviews(reviewsData)
-        setAiSummary(bookData.aiReviewSummary)
+        setAiSummary(bookData.aiReviewSummary ?? bookData.ai_review_summary ?? null)
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
           return

@@ -21,7 +21,12 @@ function SearchPage() {
   const [error, setError] = useState<string | null>(null)
 
   const apiBaseUrl = useMemo(
-    () => import.meta.env.VITE_API_BASE_URL as string | undefined,
+    () => {
+      const raw = import.meta.env.VITE_API_BASE_URL as string | undefined
+      if (!raw) return undefined
+      const trimmed = raw.replace(/\/+$/, '')
+      return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`
+    },
     [],
   )
 
@@ -77,7 +82,9 @@ function SearchPage() {
             return inTitle || inAuthor
           })
           .map((book) => ({
-            id: book.bookId,
+            id: (book as unknown as { bookId?: string; book_id?: string }).bookId ??
+              (book as unknown as { bookId?: string; book_id?: string }).book_id ??
+              '',
             title: book.title,
             author: book.author ?? 'Unknown author',
           }))
